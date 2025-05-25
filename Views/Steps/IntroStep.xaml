@@ -1,0 +1,39 @@
+<UserControl x:Class="wsl_docker_installer.StartStep"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch">
+    <StackPanel Orientation="Vertical"
+                        HorizontalAlignment="Left"
+                        Grid.Column="1">
+        <TextBlock 
+            Text="If you use this setup to install WSL and Docker, you accept the terms and conditions of Microsoft and Docker." FontSize="11" 
+            Margin="5 5 0 0"
+        />
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5 5 0 0">
+                <Run Text="Docker: " />
+                <Hyperlink NavigateUri="https://www.docker.com/legal/docker-terms-service/"
+                           RequestNavigate="Hyperlink_RequestNavigate"
+                           Foreground="Gray"
+                           TextDecorations="{x:Null}">
+                    Terms of Service
+                </Hyperlink>
+
+                <CheckBox Content="Read" Margin="10,0,0,0" VerticalAlignment="Center"/>
+            </TextBlock>
+
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5 5 0 0">
+                <Run Text="Microsoft: " />
+                <Hyperlink NavigateUri="https://www.microsoft.com/en-id/servicesagreement"
+                           RequestNavigate="Hyperlink_RequestNavigate"
+                           Foreground="Gray"
+                           TextDecorations="{x:Null}">
+                    Terms of Service
+                </Hyperlink>
+            
+                <CheckBox Content="Read" VerticalAlignment="Center"/>
+            </TextBlock>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

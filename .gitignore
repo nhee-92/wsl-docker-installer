@@ -1,1 +1,30 @@
+# Build
+bin/
+obj/
+
+# VS Code / Rider / VS
 .vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# Logs
+*.log
+
+# User-specific
+*.userprefs
+*.userosscache
+*.sln.docstates
+
+# Publish output
+*.publish/
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+
+# Others
+*.db
+*.DS_Store
