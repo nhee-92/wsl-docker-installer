@@ -2,13 +2,7 @@
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using wsl_docker_installer.Views.Steps;
 
 namespace wsl_docker_installer
 {
@@ -28,13 +22,25 @@ namespace wsl_docker_installer
                 case 1:
                     StepContent.Content = new StartStep();
                     break;
+
                 case 2:
-                    StepContent.Content = new NextStep();
+                    LockNextButtonWhileLoading(new InstallationCheck());
                     break;
+
                 default:
                     StepContent.Content = null;
                     break;
             }
+        }
+
+        private void LockNextButtonWhileLoading(BaseStep step)
+        {
+            step.StepReadyChanged += (ready) =>
+            {
+                Footer.NextButton.IsEnabled = ready;
+            };
+            Footer.NextButton.IsEnabled = false;
+            StepContent.Content = step;
         }
 
         private void Footer_NextClicked(object sender, RoutedEventArgs e)

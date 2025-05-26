@@ -37,7 +37,6 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <!-- Linker Text -->
         <TextBlock VerticalAlignment="Center" Grid.Column="0" Margin="0,0,10,0">
             <Hyperlink NavigateUri="https://github.com/nhee-92/wsl-docker-installer"
                        RequestNavigate="Hyperlink_RequestNavigate"
@@ -48,15 +47,17 @@
             </Hyperlink>
         </TextBlock>
 
-        <!-- Rechte Buttons -->
-        <StackPanel Orientation="Horizontal"
+        <StackPanel
+                Orientation="Horizontal" 
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Grid.Column="1">
-            <Button Content="Next"
+            <Button x:Name="NextBtn"
+                Content="Next"
                 Style="{StaticResource PrimaryButtonStyle}"
                 Click="NextButton_Click" />
-            <Button Content="Cancel"
+            <Button x:Name="CancelBtn"
+                Content="Cancel"
                 Style="{StaticResource SecondaryButtonStyle}"
                 Click="CancelButton_Click" />
         </StackPanel>

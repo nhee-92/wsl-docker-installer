@@ -10,8 +10,11 @@ namespace wsl_docker_installer
         public FooterControl()
         {
             InitializeComponent();
+            NextClicked = delegate { };
+            CancelClicked = delegate { };
         }
 
+        public Button NextButton => NextBtn;
         public event RoutedEventHandler NextClicked;
         public event RoutedEventHandler CancelClicked;
 

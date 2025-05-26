@@ -5,11 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Navigation;
 
-namespace wsl_docker_installer
+namespace wsl_docker_installer.Views.Steps
 {
-    partial class StartStep
+    partial class StartStep : UserControl
     {
         public StartStep()
         {
