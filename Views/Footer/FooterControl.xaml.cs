@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 
-namespace wsl_docker_installer
+namespace wsl_docker_installer.Views.Footer
 {
     public partial class FooterControl : UserControl
     {
@@ -17,6 +17,17 @@ namespace wsl_docker_installer
         public Button NextButton => NextBtn;
         public event RoutedEventHandler NextClicked;
         public event RoutedEventHandler CancelClicked;
+
+        public bool IsNextEnabled
+        {
+            get => NextButton.IsEnabled;
+            set => NextButton.IsEnabled = value;
+        }
+
+        public void SetNextButtonText(string text)
+        {
+            NextButton.Content = text;
+        }
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {

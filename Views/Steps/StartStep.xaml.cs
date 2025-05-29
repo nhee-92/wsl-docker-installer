@@ -10,7 +10,7 @@ using System.Windows.Navigation;
 
 namespace wsl_docker_installer.Views.Steps
 {
-    partial class StartStep : UserControl
+    public partial class StartStep : BaseStep
     {
         public StartStep()
         {
