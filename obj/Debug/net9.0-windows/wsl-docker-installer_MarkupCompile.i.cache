@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET9_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 C:\git\wsl-docker-installer\App.xaml
-6-299608856
+7125627358
 
-12-1253256613
-2031847328334
-MainWindow.xaml;Views\Footer\FooterControl.xaml;Views\Header\HeaderControl.xaml;Views\Steps\DistroInstall.xaml;Views\Steps\StartStep.xaml;Views\Steps\WslInstallationCheck.xaml;
+14-484104368
+214-1409695330
+MainWindow.xaml;Views\Footer\FooterControl.xaml;Views\Header\HeaderControl.xaml;Views\Steps\DistroInstall.xaml;Views\Steps\DockerInstall.xaml;Views\Steps\StartStep.xaml;Views\Steps\WslInstallationCheck.xaml;
 
 False
 

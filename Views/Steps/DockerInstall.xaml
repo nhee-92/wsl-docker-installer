@@ -1,0 +1,58 @@
+<views:BaseStep x:Class="wsl_docker_installer.Views.Steps.DockerInstall"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:views="clr-namespace:wsl_docker_installer.Views.Steps"
+                xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit">
+    <Grid>
+        <StackPanel Margin="10" Orientation="Vertical">
+            <TextBlock 
+                Margin="0,0,0,10"
+                FontSize="11" 
+                TextWrapping="Wrap" 
+                Text="Docker and docker-compose are now installed on the VM that has just been installed. Please do not use the WSL during this time, as it must be restarted during the installation." />
+            <TextBlock 
+                Margin="0"
+                FontSize="11" 
+                TextWrapping="Wrap" 
+                Text="As of Docker v20.10+, a separate Python script docker-compose is no longer supplied and the call is made without a hyphen:" />
+            <TextBlock />
+
+
+            <Border 
+                BorderBrush="Gray"
+                BorderThickness="0,0,0,1"
+                Margin="0,0,0,10">
+                <avalonEdit:TextEditor Name="CodeEditorNew"
+                           Text="docker compose up"
+                           ShowLineNumbers="True"
+                           SyntaxHighlighting="ps1"
+                           FontFamily="Consolas"
+                           FontSize="14"
+                           IsReadOnly="True"
+                           HorizontalScrollBarVisibility="Hidden"
+                           VerticalScrollBarVisibility="Hidden"/>
+            </Border>
+
+            <StackPanel Orientation="Vertical" Margin="0,110">
+                <StackPanel x:Name="OldDockerCheckPanel" Margin="0,0,0,10" Orientation="Horizontal" >
+                    <TextBlock Text="Old docker-compose to be installed as well?" />
+                    <CheckBox x:Name="OldDockerCheckBox" Margin="10, 0" />
+                </StackPanel>
+                <StackPanel x:Name="InstallDockerProgressPanel" Margin="0,0,0,10" Orientation="Horizontal" >
+                    <TextBlock 
+                        x:Name="DockerInstallText" 
+                        FontSize="11" 
+                        TextWrapping="Wrap" 
+                        Text="Install Docker, this may take some minutes." />
+                    <mah:ProgressRing 
+                        x:Name="InstallProgressSpinner" 
+                        Width="14" 
+                        Height="14" 
+                        IsActive="True" 
+                        Margin="10,0,10,0" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</views:BaseStep>

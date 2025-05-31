@@ -1,20 +1,19 @@
-﻿using System.Net.Http;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
+﻿using System.Windows;
 using wsl_docker_installer.Views.Steps;
 
 namespace wsl_docker_installer
 {
     public partial class MainWindow : Window
     {
-        private readonly String footerPrimaryButtonNameNext = "Next";
-        private readonly String footerPrimaryButtonNameInstall = "Install";
+        private readonly string footerPrimaryButtonNameNext = "Next";
+        private readonly string footerPrimaryButtonNameInstall = "Install";
+        private readonly string footerPrimaryButtonNameRetry = "Try Again";
 
         private int currentStep = 1;
+        private string distroName = "";
         private bool isWslInstalled = false;
+        private bool isDistroInstalled = false;
+        private bool IsDockerInstalled = false;
         private BaseStep currentStepControl = null!;
 
         public MainWindow()
@@ -28,47 +27,95 @@ namespace wsl_docker_installer
             switch (currentStep)
             {
                 case 1:
-                    Header.Title = "Information";
-                    Header.Subtitle = "Please read the following important information before continuing.";
-                    currentStepControl = new StartStep();
+                    RenderStartStep();
+
                     break;
 
                 case 2:
-                    Header.Title = "WSL Installation";
-                    Header.Subtitle = "Check for available installation";
+                    RenderWslStep();
 
-                    var wslInstallationCheck = new WslInstallationCheck();
-                    LockNextButtonWhileLoading(wslInstallationCheck);
-                    currentStepControl = wslInstallationCheck;
-
-                    wslInstallationCheck.WslCheckCompleted += (installed) =>
-                    {
-                        isWslInstalled = installed;
-                        Footer.SetNextButtonText(installed ? footerPrimaryButtonNameNext : footerPrimaryButtonNameInstall);
-                    };
-
-                    wslInstallationCheck.StepReadyChanged += ready => Footer.IsNextEnabled = ready;
-                    wslInstallationCheck.NextButtonTextChanged += text => Footer.SetNextButtonText(text);
                     break;
 
                 case 3:
-                    Header.Title = "Ubuntu Installation";
-                    Header.Subtitle = "To ensure the right environment for docker, another VM is installed in the wsl that is only responsible for docker.";
-                    Footer.SetNextButtonText(footerPrimaryButtonNameInstall);
-                    var distroInstall = new DistroInstall();
-                    LockNextButtonWhileLoading(distroInstall);
-                    currentStepControl = distroInstall;
+                    RenderDistroStep();
+
+                    break;
+
+                case 4:
+                    RenderDockerStep();
 
                     break;
 
                 default:
-                    Header.Title = "Error";
-                    Header.Subtitle = "oops, that wasn't supposed to happen.";
-                    currentStepControl = null!;
+                    DefaultStep();
+
                     break;
             }
 
             StepContent.Content = currentStepControl;
+        }
+
+        private void DefaultStep ()
+        {
+            Header.Title = "Error";
+            Header.Subtitle = "oops, that wasn't supposed to happen.";
+            currentStepControl = null!;
+        }
+
+        private void RenderStartStep()
+        {
+            Header.Title = "Information";
+            Header.Subtitle = "Please read the following important information before continuing.";
+            currentStepControl = new StartStep();
+        }
+
+        private void RenderWslStep()
+        {
+            Header.Title = "WSL Installation";
+            Header.Subtitle = "Check for available installation";
+
+            var wslInstallationCheck = new WslInstallationCheck();
+            LockNextButtonWhileLoading(wslInstallationCheck);
+            currentStepControl = wslInstallationCheck;
+
+            wslInstallationCheck.WslCheckCompleted += (installed) =>
+            {
+                isWslInstalled = installed;
+                Footer.SetNextButtonText(installed ? footerPrimaryButtonNameNext : footerPrimaryButtonNameInstall);
+            };
+
+            // TODO: Maybe unnecessary, but ensures the footer is updated correctly
+            wslInstallationCheck.StepReadyChanged += ready => Footer.IsNextEnabled = ready;
+            wslInstallationCheck.NextButtonTextChanged += text => Footer.SetNextButtonText(text);
+        }
+
+        private void RenderDistroStep()
+        {
+            Header.Title = "Ubuntu Installation";
+            Header.Subtitle = "To ensure the right environment for docker, another VM is installed in the wsl that is only responsible for docker.";
+            Footer.SetNextButtonText(footerPrimaryButtonNameInstall);
+            var distroInstall = new DistroInstall();
+            LockNextButtonWhileLoading(distroInstall);
+            currentStepControl = distroInstall;
+
+            distroInstall.DistroNameConfirmed += name => {
+                distroName = name;
+            };
+
+            distroInstall.DistroInstallCheck += (installed) =>
+            {
+                isDistroInstalled = installed;
+                Footer.SetNextButtonText(installed ? footerPrimaryButtonNameNext : footerPrimaryButtonNameInstall);
+            };
+        }
+
+        private void RenderDockerStep()
+        {
+            Header.Title = "Docker Installation";
+            Header.Subtitle = "Docker is now being installed in the WSL VM.";
+            Footer.SetNextButtonText(footerPrimaryButtonNameInstall);
+            var dockerInstall = new DockerInstall(distroName);
+            currentStepControl = dockerInstall;
         }
 
         private void LockNextButtonWhileLoading(BaseStep step)
@@ -81,18 +128,31 @@ namespace wsl_docker_installer
             StepContent.Content = step;
         }
 
-        private async void FooterNextClicked(object sender, RoutedEventArgs e)
+        private void FooterNextClicked(object sender, RoutedEventArgs e)
         {
+            
             if (currentStepControl is WslInstallationCheck wslCheck && !isWslInstalled)
             {
                 wslCheck.InstallWslAsync();
                 return;
             }
-            else if (currentStepControl is DistroInstall distroInstall)
+            else if (currentStepControl is DistroInstall distroInstall && !isDistroInstalled)
             {
-                Footer.NextButton.IsEnabled = false;
-                Footer.SetNextButtonText("Installing...");
-                await distroInstall.InstallCustomUbuntuDistroAsync();
+                distroInstall.HandleInstallDistro();
+                return;
+            }
+            else if (currentStepControl is DockerInstall dockerInstall && !IsDockerInstalled)
+            {
+                LockNextButtonWhileLoading(dockerInstall);
+                dockerInstall.InstallDocker();
+                dockerInstall.DockerInstalled += (installed) =>
+                {
+                    MessageBox.Show($"Tauche ich zu früh auf? VALUE: {installed}");
+                    IsDockerInstalled = installed;
+                    Footer.SetNextButtonText(IsDockerInstalled ? footerPrimaryButtonNameNext : footerPrimaryButtonNameRetry);
+                };
+                
+                return;
             }
             else
             {

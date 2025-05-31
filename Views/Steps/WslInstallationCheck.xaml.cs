@@ -26,7 +26,7 @@ namespace wsl_docker_installer.Views.Steps
         public async void InstallWslAsync()
         {
             SetStepReady(false);
-            SetNextButtonText("Install...");
+            SetNextButtonText("Installing...");
 
             StatusValue.Text = "Install WSL...";
             StatusValue.Foreground = new SolidColorBrush(Colors.Black);

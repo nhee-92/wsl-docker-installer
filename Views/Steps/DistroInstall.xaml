@@ -10,14 +10,14 @@
 			
 			<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
 				<TextBlock Text="Distribution name: " FontSize="11" Width="130"/>
-				<TextBox TextChanged="DistroNameTextBox_TextChanged" x:Name="DistroNameInput" Width="430" FontSize="11"/>
+				<TextBox TextChanged="DistroNameTextBox_TextChanged" x:Name="DistroNameInput" Width="424" FontSize="11"/>
 			</StackPanel>
 			
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Center"  x:Name="DownloadPanel" Margin=" 0 10">
 				<TextBlock Text="Download ubuntu image: " x:Name="DownloadText" FontSize="11" Width="130" Visibility="Collapsed" />
 				<ProgressBar x:Name="DownloadProgressBar"
 					Height="20"
-					Width="430"
+					Width="424"
 					Minimum="0"
 					Maximum="100"
 					Visibility="Collapsed" />
