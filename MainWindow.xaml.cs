@@ -74,7 +74,7 @@ namespace wsl_docker_installer
             Header.Title = "WSL Installation";
             Header.Subtitle = "Check for available installation";
 
-            var wslInstallationCheck = new WslInstallationCheck();
+            var wslInstallationCheck = new WslInstall();
             LockNextButtonWhileLoading(wslInstallationCheck);
             currentStepControl = wslInstallationCheck;
 
@@ -131,7 +131,7 @@ namespace wsl_docker_installer
         private void FooterNextClicked(object sender, RoutedEventArgs e)
         {
             
-            if (currentStepControl is WslInstallationCheck wslCheck && !isWslInstalled)
+            if (currentStepControl is WslInstall wslCheck && !isWslInstalled)
             {
                 wslCheck.InstallWslAsync();
                 return;

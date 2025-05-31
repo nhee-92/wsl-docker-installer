@@ -1,0 +1,11 @@
+<views:BaseStep x:Class="wsl_docker_installer.Views.Steps.TaskInstall"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:views="clr-namespace:wsl_docker_installer.Views.Steps"
+                xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls">
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Margin="10" x:Name="NewPanel">
+            <TextBlock Text="Status: " FontSize="11" VerticalAlignment="Center" x:Name="new"/>
+        </StackPanel>
+    </Grid>
+</views:BaseStep>

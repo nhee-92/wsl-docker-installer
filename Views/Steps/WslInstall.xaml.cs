@@ -11,12 +11,12 @@ using System.Windows.Media;
 
 namespace wsl_docker_installer.Views.Steps
 {
-    public partial class WslInstallationCheck : BaseStep
+    public partial class WslInstall : BaseStep
     {
         public bool IsWslInstalled { get; private set; } = false;
         public event Action<bool> WslCheckCompleted = delegate { };
 
-        public WslInstallationCheck()
+        public WslInstall()
         {
             SetStepReady(false);
             InitializeComponent();
