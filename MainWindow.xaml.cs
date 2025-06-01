@@ -14,6 +14,7 @@ namespace wsl_docker_installer
         private bool isWslInstalled = false;
         private bool isDistroInstalled = false;
         private bool IsDockerInstalled = false;
+        private bool IsTaskCreated = false;
         private BaseStep currentStepControl = null!;
 
         public MainWindow()
@@ -43,6 +44,11 @@ namespace wsl_docker_installer
 
                 case 4:
                     RenderDockerStep();
+
+                    break;
+
+                case 5:
+                    RenderTaskStep();
 
                     break;
 
@@ -116,6 +122,20 @@ namespace wsl_docker_installer
             Footer.SetNextButtonText(footerPrimaryButtonNameInstall);
             var dockerInstall = new DockerInstall(distroName);
             currentStepControl = dockerInstall;
+
+            dockerInstall.DockerInstalled += (installed) =>
+            {
+                IsDockerInstalled = installed;
+                Footer.SetNextButtonText(IsDockerInstalled ? footerPrimaryButtonNameNext : footerPrimaryButtonNameRetry);
+            };
+        }
+
+        private void RenderTaskStep()
+        {
+            Header.Title = "Create Windows task and tcp port for docker";
+            Header.Subtitle = "";
+            Footer.SetNextButtonText(footerPrimaryButtonNameInstall);
+            currentStepControl = new TaskInstall(distroName);
         }
 
         private void LockNextButtonWhileLoading(BaseStep step)
@@ -130,7 +150,7 @@ namespace wsl_docker_installer
 
         private void FooterNextClicked(object sender, RoutedEventArgs e)
         {
-            
+
             if (currentStepControl is WslInstall wslCheck && !isWslInstalled)
             {
                 wslCheck.InstallWslAsync();
@@ -145,13 +165,12 @@ namespace wsl_docker_installer
             {
                 LockNextButtonWhileLoading(dockerInstall);
                 dockerInstall.InstallDocker();
-                dockerInstall.DockerInstalled += (installed) =>
-                {
-                    MessageBox.Show($"Tauche ich zu früh auf? VALUE: {installed}");
-                    IsDockerInstalled = installed;
-                    Footer.SetNextButtonText(IsDockerInstalled ? footerPrimaryButtonNameNext : footerPrimaryButtonNameRetry);
-                };
-                
+                return;
+            }
+            else if (currentStepControl is TaskInstall taskInstall && !IsTaskCreated)
+            {
+                LockNextButtonWhileLoading(taskInstall);
+                taskInstall.ConfigureDocker();
                 return;
             }
             else

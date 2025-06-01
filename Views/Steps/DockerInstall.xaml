@@ -18,7 +18,6 @@
                 Text="As of Docker v20.10+, a separate Python script docker-compose is no longer supplied and the call is made without a hyphen:" />
             <TextBlock />
 
-
             <Border 
                 BorderBrush="Gray"
                 BorderThickness="0,0,0,1"

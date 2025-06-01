@@ -3,9 +3,30 @@
                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                 xmlns:views="clr-namespace:wsl_docker_installer.Views.Steps"
                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls">
-    <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Margin="10" x:Name="NewPanel">
-            <TextBlock Text="Status: " FontSize="11" VerticalAlignment="Center" x:Name="new"/>
-        </StackPanel>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="To use Docker natively under Windows, a TCP port is released on the VM, which can then be reached under Windows. In addition, a Windows task is created that also starts the Docker daemon when Windows is started."
+                   TextWrapping="Wrap"
+                   FontSize="11"
+                   Margin="0,0,0,5"/>
+
+		<StackPanel Grid.Row="1" Orientation="Horizontal">
+			<TextBlock x:Name="PortKey" Width="30" Text="Port: ">
+				
+			</TextBlock>
+            <TextBox x:Name="PortValue"
+					 Width="36"
+                     Grid.Row="1"
+                     Height="20"
+                     FontSize="11"
+					 MaxLength="5"
+                     Text="2375"
+                     VerticalContentAlignment="Center"/>
+		</StackPanel>
     </Grid>
 </views:BaseStep>

@@ -39,7 +39,7 @@ namespace wsl_docker_installer.Utils
             }
         }
 
-        public static async Task<bool> RunCommandAsync(string file, string arguments, string errorMessage) 
+        public static async Task<bool> RunCommandAsync(string file, string arguments, string errorMessage, Encoding? encoding = null)
         {
             try
             {
@@ -49,10 +49,10 @@ namespace wsl_docker_installer.Utils
                     Arguments = arguments,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
-                    RedirectStandardError = true, 
+                    RedirectStandardError = true,
                     CreateNoWindow = true,
-                    StandardOutputEncoding = Encoding.Unicode,
-                    StandardErrorEncoding = Encoding.Unicode
+                    StandardOutputEncoding = encoding ?? Encoding.Unicode,
+                    StandardErrorEncoding = encoding ?? Encoding.Unicode
                 };
                 return await ProcessStarterHandling(psi, errorMessage);
             }
