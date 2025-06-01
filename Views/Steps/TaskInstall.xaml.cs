@@ -1,6 +1,4 @@
-﻿
-using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Text;
@@ -13,7 +11,8 @@ namespace wsl_docker_installer.Views.Steps
     public partial class TaskInstall : BaseStep
     {
         private readonly string distroName;
-        
+        public event Action<bool> isDockerConfigured = delegate { };
+
         public TaskInstall(string distroName)
         {
             InitializeComponent();
@@ -39,6 +38,7 @@ namespace wsl_docker_installer.Views.Steps
             if (taskCreated && firewallConfigured && dockerCLIInstalled)
             {
                 ConfigureDockerHostEnvironment(port);
+                isDockerConfigured.Invoke(true);
                 MessageBox.Show($"Port forwarding and task for port {port} successfully set up.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }

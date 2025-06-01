@@ -8,13 +8,14 @@ namespace wsl_docker_installer
         private readonly string footerPrimaryButtonNameNext = "Next";
         private readonly string footerPrimaryButtonNameInstall = "Install";
         private readonly string footerPrimaryButtonNameRetry = "Try Again";
+        private readonly string footerPrimaryButtonNameFinish = "Restart";
 
         private int currentStep = 1;
         private string distroName = "";
         private bool isWslInstalled = false;
         private bool isDistroInstalled = false;
         private bool IsDockerInstalled = false;
-        private bool IsTaskCreated = false;
+        private bool IsDockerConfigured = false;
         private BaseStep currentStepControl = null!;
 
         public MainWindow()
@@ -135,7 +136,14 @@ namespace wsl_docker_installer
             Header.Title = "Create Windows task and tcp port for docker";
             Header.Subtitle = "";
             Footer.SetNextButtonText(footerPrimaryButtonNameInstall);
+            var taskInstall = new TaskInstall(distroName);
             currentStepControl = new TaskInstall(distroName);
+
+            taskInstall.isDockerConfigured += (configured) =>
+            {
+                IsDockerConfigured = configured;
+                Footer.SetNextButtonText(IsDockerConfigured ? footerPrimaryButtonNameFinish : footerPrimaryButtonNameRetry);
+            };
         }
 
         private void LockNextButtonWhileLoading(BaseStep step)
@@ -167,7 +175,7 @@ namespace wsl_docker_installer
                 dockerInstall.InstallDocker();
                 return;
             }
-            else if (currentStepControl is TaskInstall taskInstall && !IsTaskCreated)
+            else if (currentStepControl is TaskInstall taskInstall && !IsDockerConfigured)
             {
                 LockNextButtonWhileLoading(taskInstall);
                 taskInstall.ConfigureDocker();
