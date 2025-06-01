@@ -5,28 +5,67 @@
                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls">
     <Grid Margin="20">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock Text="To use Docker natively under Windows, a TCP port is released on the VM, which can then be reached under Windows. In addition, a Windows task is created that also starts the Docker daemon when Windows is started."
-                   TextWrapping="Wrap"
+        <TextBlock Grid.Row="0"
+				   Text="To use Docker natively under Windows, a TCP port is released on the VM, which can then be reached under Windows. In addition, a Windows task is created that also starts the Docker daemon when Windows is started."
+				   TextWrapping="Wrap"
                    FontSize="11"
-                   Margin="0,0,0,5"/>
+                   Margin="0,0,0,10" />
 
-		<StackPanel Grid.Row="1" Orientation="Horizontal">
-			<TextBlock x:Name="PortKey" Width="30" Text="Port: ">
-				
-			</TextBlock>
+		<StackPanel Grid.Row="1" 
+					Orientation="Horizontal" 
+					Margin="0,0,0,10">
+			<TextBlock x:Name="PortKey" 
+					   Width="30" 
+					   Text="Port: " />
             <TextBox x:Name="PortValue"
 					 Width="36"
                      Grid.Row="1"
                      Height="20"
                      FontSize="11"
-					 MaxLength="5"
+				     MaxLength="5"
                      Text="2375"
-                     VerticalContentAlignment="Center"/>
+                     VerticalContentAlignment="Center" />
+		</StackPanel>
+
+		<TextBlock Grid.Row="2" 
+				   Text="In addition, a scheduled task is created that is executed when logging in, starts the docker daemon and makes the host accessible via TCP."
+                   TextWrapping="Wrap"
+                   FontSize="11"
+                   Margin="0,0,0,10" />
+
+		<StackPanel Grid.Row="3" 
+					Orientation="Horizontal" 
+					Margin="0,0,0,10">
+			<TextBlock Text="Task name: "
+					   TextWrapping="Wrap"
+					   FontSize="11" />
+			<TextBlock Grid.Row="2" 
+					   Text="DockerStart" 
+					   FontWeight="Bold"
+					   TextWrapping="Wrap"
+                       FontSize="11" />
+		</StackPanel>
+		<StackPanel Grid.Row="4"
+					Orientation="Horizontal"
+					Height="20"
+					Margin="0">
+			<TextBlock x:Name="ConfigureDockerInstallerText"
+					   Margin="0,0,10,0"
+					   TextWrapping="Wrap"
+                       FontSize="11" 
+					   Visibility="Collapsed" /> 
+			<mah:ProgressRing x:Name="ConfigureDockerInstallerSpinner"
+							  Width="14"
+							  Height="14"
+							  IsActive="True"
+							  Visibility="Collapsed" />
 		</StackPanel>
     </Grid>
 </views:BaseStep>

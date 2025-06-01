@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using wsl_docker_installer.Utils;
 using wsl_docker_installer.Views.Steps;
 
 namespace wsl_docker_installer
@@ -8,7 +9,7 @@ namespace wsl_docker_installer
         private readonly string footerPrimaryButtonNameNext = "Next";
         private readonly string footerPrimaryButtonNameInstall = "Install";
         private readonly string footerPrimaryButtonNameRetry = "Try Again";
-        private readonly string footerPrimaryButtonNameFinish = "Restart";
+        private readonly string footerPrimaryButtonNameFinish = "Finish";
 
         private int currentStep = 1;
         private string distroName = "";
@@ -133,13 +134,13 @@ namespace wsl_docker_installer
 
         private void RenderTaskStep()
         {
-            Header.Title = "Create Windows task and tcp port for docker";
+            Header.Title = "Configure Docker and Windows";
             Header.Subtitle = "";
             Footer.SetNextButtonText(footerPrimaryButtonNameInstall);
             var taskInstall = new TaskInstall(distroName);
-            currentStepControl = new TaskInstall(distroName);
+            currentStepControl = taskInstall;
 
-            taskInstall.isDockerConfigured += (configured) =>
+            taskInstall.IsDockerConfigured += (configured) =>
             {
                 IsDockerConfigured = configured;
                 Footer.SetNextButtonText(IsDockerConfigured ? footerPrimaryButtonNameFinish : footerPrimaryButtonNameRetry);
@@ -181,10 +182,32 @@ namespace wsl_docker_installer
                 taskInstall.ConfigureDocker();
                 return;
             }
+            else if (currentStepControl is TaskInstall && IsDockerConfigured)
+            {
+                AskAndRestart();
+            }
             else
             {
                 currentStep++;
                 ShowCurrentStep();
+            }
+        }
+
+        public static async void AskAndRestart()
+        {
+            var result = MessageBox.Show(
+                "The system needs to restart to complete the installation. Do you want to restart now?",
+                "Restart Required",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                await ProcessStarter.RunCommandAsync("shutdown.exe", "/r /t 0", ""); 
+            }
+            if (result == MessageBoxResult.No)
+            {
+                Application.Current.Shutdown();
             }
         }
 

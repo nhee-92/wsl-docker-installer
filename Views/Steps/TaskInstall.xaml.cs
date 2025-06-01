@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Media;
 using wsl_docker_installer.Utils;
 
 namespace wsl_docker_installer.Views.Steps
@@ -11,7 +12,7 @@ namespace wsl_docker_installer.Views.Steps
     public partial class TaskInstall : BaseStep
     {
         private readonly string distroName;
-        public event Action<bool> isDockerConfigured = delegate { };
+        public event Action<bool> IsDockerConfigured = delegate { };
 
         public TaskInstall(string distroName)
         {
@@ -30,16 +31,26 @@ namespace wsl_docker_installer.Views.Steps
                 return;
             }
 
+            ConfigureDockerInstallerText.Visibility = Visibility.Visible;
+            ConfigureDockerInstallerSpinner.Visibility = Visibility.Visible;
+
+            ConfigureDockerInstallerText.Text = "Create scheduled task...";
             bool taskCreated = await CreateScheduledTaskAsync(port);
+
+            ConfigureDockerInstallerText.Text = "Configure firewall and port proxy...";
             bool firewallConfigured = await ConfigureFirewallAndPortProxyAsync(port);
+
+            ConfigureDockerInstallerText.Text = "Install Docker CLI...";
             bool dockerCLIInstalled = await InstallDockerCLI();
-            
 
             if (taskCreated && firewallConfigured && dockerCLIInstalled)
             {
+                ConfigureDockerInstallerSpinner.Visibility = Visibility.Collapsed;
+                ConfigureDockerInstallerText.Text = "The configuration of Windows and docker was successful!";
+                ConfigureDockerInstallerText.Foreground = new SolidColorBrush(Colors.Green);
                 ConfigureDockerHostEnvironment(port);
-                isDockerConfigured.Invoke(true);
-                MessageBox.Show($"Port forwarding and task for port {port} successfully set up.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                SetStepReady(true);
+                IsDockerConfigured.Invoke(true);
             }
         }
 
@@ -47,20 +58,19 @@ namespace wsl_docker_installer.Views.Steps
         {
             string dockerHost = $"tcp://localhost:{port}";
             Environment.SetEnvironmentVariable("DOCKER_HOST", dockerHost, EnvironmentVariableTarget.User);
-            Console.WriteLine($"DOCKER_HOST wurde gesetzt auf: {dockerHost}");
         }
 
         private static async Task<bool> InstallDockerCLI()
         {
             string DownloadUrl = "https://download.docker.com/win/static/stable/x86_64/docker-26.1.4.zip";
-            string InstallPath = @"C:\sw\DockerCLI\docker";
+            string InstallPath = @"C:\sw\DockerCLI";
 
             try
             {
                 Directory.CreateDirectory(InstallPath);
                 string tempZipPath = Path.Combine(Path.GetTempPath(), "dockercli.zip");
 
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = new())
                 {
                     using var response = await client.GetAsync(DownloadUrl);
                     response.EnsureSuccessStatusCode();
@@ -71,7 +81,7 @@ namespace wsl_docker_installer.Views.Steps
                 ZipFile.ExtractToDirectory(tempZipPath, InstallPath, overwriteFiles: true);
                 File.Delete(tempZipPath);
 
-                AddToPathIfMissing(InstallPath);
+                AddToPathIfMissing($"{InstallPath}\\docker");
 
                 return true;
             }
@@ -88,11 +98,6 @@ namespace wsl_docker_installer.Views.Steps
             {
                 string newPath = path.TrimEnd(';') + ";" + folderPath;
                 Environment.SetEnvironmentVariable("PATH", newPath, EnvironmentVariableTarget.User);
-                MessageBox.Show("Pfad zur PATH-Variablen hinzugefügt.", "Add to Path", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
-            {
-                MessageBox.Show("Pfad bereits in der PATH-Variable vorhanden.", "Add to Path", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
