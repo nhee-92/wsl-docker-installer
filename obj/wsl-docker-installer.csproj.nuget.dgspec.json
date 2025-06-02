@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\git\\wsl-docker-installer\\wsl-docker-installer.csproj": {}
+    "C:\\lars-christian.behre\\git\\wsl-docker-installer\\wsl-docker-installer.csproj": {}
   },
   "projects": {
-    "C:\\git\\wsl-docker-installer\\wsl-docker-installer.csproj": {
+    "C:\\lars-christian.behre\\git\\wsl-docker-installer\\wsl-docker-installer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\git\\wsl-docker-installer\\wsl-docker-installer.csproj",
+        "projectUniqueName": "C:\\lars-christian.behre\\git\\wsl-docker-installer\\wsl-docker-installer.csproj",
         "projectName": "wsl-docker-installer",
-        "projectPath": "C:\\git\\wsl-docker-installer\\wsl-docker-installer.csproj",
-        "packagesPath": "C:\\Users\\Lars\\.nuget\\packages\\",
-        "outputPath": "C:\\git\\wsl-docker-installer\\obj\\",
+        "projectPath": "C:\\lars-christian.behre\\git\\wsl-docker-installer\\wsl-docker-installer.csproj",
+        "packagesPath": "C:\\Users\\lars-christian.behre\\.nuget\\packages\\",
+        "outputPath": "C:\\lars-christian.behre\\git\\wsl-docker-installer\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Lars\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\lars-christian.behre\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
