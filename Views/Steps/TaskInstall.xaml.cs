@@ -103,13 +103,15 @@ namespace wsl_docker_installer.Views.Steps
 
         private async Task<bool> CreateScheduledTaskAsync(string port)
         {
-            //TODO: This starts, everytime the user login in, a new cmd to start docker at the given port. Not nice but its works. I'll fix it later.
-            string command = $"schtasks /Create /F /RL LIMITED /TN DockerStart " +
-                             $"/TR \"cmd.exe /k wsl.exe -d {distroName} -- bash -c \\\"sudo dockerd -H unix:///var/run/docker.sock -H tcp://0.0.0.0:{port}\\\"\" " +
-                             $"/SC ONLOGON /RU \"{Environment.UserName}\" /IT";
+            string user = $"{Environment.UserDomainName}\\{Environment.UserName}";
 
-            MessageBox.Show("Try to configure schtask");
-            return await ProcessStarter.RunCommandAsync("cmd.exe", $"/c {command}", "", Encoding.UTF8);
+            string dockerStartCommand = $"cmd.exe /c \"wsl.exe -d {distroName} -- bash -c \\\"sudo dockerd -H unix:///var/run/docker.sock -H tcp://0.0.0.0:{port}\\\"\"";
+            //TODO: This starts, everytime the user login in, a new cmd to start docker at the given port. Not nice but its works. I'll fix it later.
+            string taskCommand = $"schtasks /Create /F /TN DockerStart " +
+                                 $"/TR \"{dockerStartCommand}\" " +
+                                 $"/SC ONLOGON /RU \"{user}\"";
+
+            return await ProcessStarter.RunCommandAsAdminAsync("cmd.exe", $"/c {taskCommand}");
         }
 
         private async Task<bool> ConfigureFirewallAndPortProxyAsync(string port)
