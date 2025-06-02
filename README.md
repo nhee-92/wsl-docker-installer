@@ -109,8 +109,10 @@ You can modify:
   You can manually delete the scheduled task and firewall/portproxy rules:
 
   ```bash
-  schtasks /Delete /TN DockerStart /F
-  netsh interface portproxy delete v4tov4 listenport=2375 listenaddress=0.0.0.0
+  rd /s /q "C:\sw" <-- Deletes Docker CLI folder>
+  wsl --unregister {DistribuationName} <-- Unregisters WSL distribution>
+  schtasks /Delete /TN "DockerStart" /F <-- Deletes scheduled task>
+  netsh interface portproxy delete v4tov4 listenport=2375 listenaddress=0.0.0.0 <-- Deletes port proxy>
   ```
 
 ---

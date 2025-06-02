@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\lars-christian.behre\git\wsl-docker-installer\obj\Debug\net9.0-windows\
+C:\git\wsl-docker-installer\obj\Debug\net9.0-windows\
 wsl_docker_installer
 none
 false
 TRACE;DEBUG;NET;NET9_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-C:\lars-christian.behre\git\wsl-docker-installer\App.xaml
+C:\git\wsl-docker-installer\App.xaml
 91461910273
 
 16-506608695
-214-1387177217
+214-1409695330
 MainWindow.xaml;Views\Footer\FooterControl.xaml;Views\Header\HeaderControl.xaml;Views\Steps\CertificatesInstall.xaml;Views\Steps\DistroInstall.xaml;Views\Steps\DockerInstall.xaml;Views\Steps\StartStep.xaml;Views\Steps\TaskInstall.xaml;Views\Steps\WslInstall.xaml;
 
-True
+False
 
