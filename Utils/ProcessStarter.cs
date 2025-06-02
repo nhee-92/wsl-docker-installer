@@ -39,6 +39,29 @@ namespace wsl_docker_installer.Utils
             }
         }
 
+        public static async Task<bool> RunCommandAsAdminAsync(string file, string arguments)
+        {
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = file,
+                    Arguments = arguments,
+                    UseShellExecute = true,
+                    RedirectStandardOutput = false,
+                    RedirectStandardError = false,
+                    CreateNoWindow = true,
+                    Verb = "runas"
+                };
+                return await ProcessStarterAdminHandling(psi);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}", errorKey, MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+        }
+
         public static async Task<bool> RunCommandAsync(string file, string arguments, string errorMessage, Encoding? encoding = null)
         {
             try
@@ -106,6 +129,21 @@ namespace wsl_docker_installer.Utils
             if (process.ExitCode != 0)
             {
                 MessageBox.Show($"{errorMessage} Distribution: {distroName}\nOutput: {output}\n{errorKey}: {error}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+
+            return true;
+        }
+
+        private static async Task<bool> ProcessStarterAdminHandling(ProcessStartInfo psi)
+        {
+            using var process = new Process { StartInfo = psi };
+            process.Start();
+
+            await process.WaitForExitAsync();
+
+            if (process.ExitCode != 0)
+            {
                 return false;
             }
 
