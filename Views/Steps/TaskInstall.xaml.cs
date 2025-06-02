@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
+using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -36,12 +37,15 @@ namespace wsl_docker_installer.Views.Steps
 
             ConfigureDockerInstallerText.Text = "Create scheduled task...";
             bool taskCreated = await CreateScheduledTaskAsync(port);
+            MessageBox.Show($"Task created: {taskCreated}");
 
             ConfigureDockerInstallerText.Text = "Configure firewall and port proxy...";
             bool firewallConfigured = await ConfigureFirewallAndPortProxyAsync(port);
+            MessageBox.Show($"Firewall configured: {firewallConfigured}");
 
             ConfigureDockerInstallerText.Text = "Install Docker CLI...";
             bool dockerCLIInstalled = await InstallDockerCLI();
+            MessageBox.Show($"CLI Installiert: {dockerCLIInstalled}");
 
             if (taskCreated && firewallConfigured && dockerCLIInstalled)
             {
@@ -105,7 +109,7 @@ namespace wsl_docker_installer.Views.Steps
         {
             //TODO: This starts, everytime the user login in, a new cmd to start docker at the given port. Not nice but its works. I'll fix it later.
             string command = $"schtasks /Create /F /RL LIMITED /TN DockerStart /TR \"cmd.exe /k wsl.exe -d {distroName} -- bash -c \\\"sudo dockerd -H unix:///var/run/docker.sock -H tcp://0.0.0.0:{port}\\\"\" /SC ONLOGON";
-
+            MessageBox.Show("Try to configure schtask");
             return await ProcessStarter.RunCommandAsync("cmd.exe", $"/c {command}", "Could not create the auto start task", Encoding.UTF8);
         }
 
@@ -120,11 +124,11 @@ namespace wsl_docker_installer.Views.Steps
             string addRule = $"netsh advfirewall firewall add rule name=\"Docker TCP {port}\" dir=in action=allow protocol=TCP localport={port}";
             string portProxy = $"netsh interface portproxy add v4tov4 listenport={port} listenaddress=0.0.0.0 connectport={port} connectaddress={ip}";
 
-            await ProcessStarter.RunCommandAsync("netsh", $"advfirewall firewall delete rule name=\"Docker TCP {port}\"", "");
-            await ProcessStarter.RunCommandAsync("netsh", $"interface portproxy delete v4tov4 listenport={port} listenaddress=0.0.0.0", "");
+            await ProcessStarter.RunCommandAsAdminAsync("netsh", $"advfirewall firewall delete rule name=\"Docker TCP {port}\"", "");
+            await ProcessStarter.RunCommandAsAdminAsync("netsh", $"interface portproxy delete v4tov4 listenport={port} listenaddress=0.0.0.0", "");
 
-            bool firewallRule = await ProcessStarter.RunCommandAsync("cmd.exe", $"/c {addRule}", "Could not update firewall rule");
-            bool proxyRule = await ProcessStarter.RunCommandAsync("cmd.exe", $"/c {portProxy}", "Could not update proxy rule");
+            bool firewallRule = await ProcessStarter.RunCommandAsAdminAsync("cmd.exe", $"/c {addRule}", "Could not update firewall rule");
+            bool proxyRule = await ProcessStarter.RunCommandAsAdminAsync("cmd.exe", $"/c {portProxy}", "Could not update proxy rule");
 
             return firewallRule && proxyRule;
         }
