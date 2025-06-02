@@ -1,0 +1,42 @@
+<views:BaseStep x:Class="wsl_docker_installer.Views.Steps.CertificatesInstall"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:views="clr-namespace:wsl_docker_installer.Views.Steps"
+                xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls">
+	<UserControl.Resources>
+		<Style x:Key="SecondaryButtonStyle" TargetType="Button">
+			<Setter Property="Background" Value="#E5E5E5"/>
+			<Setter Property="Foreground" Value="Black"/>
+			<Setter Property="FontWeight" Value="SemiBold"/>
+			<Setter Property="BorderBrush" Value="#CCCCCC"/>
+			<Setter Property="Padding" Value="5"/>
+			<Setter Property="Margin" Value="5,0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+		</Style>
+	</UserControl.Resources>
+	
+    <Grid>
+		<StackPanel Margin="10" Orientation="Vertical">
+			<StackPanel>
+				<TextBlock TextWrapping="Wrap" Text="If no additional certificates are required, simply check the box and skip this point. However, if certificates are required and these are not added here, the installation will fail." />
+				<Label Content="Selected (*.certs):" Margin="10,0,0,0" VerticalAlignment="Top"/>
+				<StackPanel Orientation="Horizontal">
+					<TextBox x:Name="SelectCertTextBox" Width="460" VerticalContentAlignment="Center" Margin="10,0,10,0" VerticalAlignment="Top" Height="25" IsReadOnly="True"/>
+					<Button x:Name="SelectCertButton" Tag="SelectCertTextBox" Width="60" Content="Select" Margin="10,0,10,0" VerticalAlignment="Top" Style="{StaticResource SecondaryButtonStyle}" Click="SelectFolderButton_Click" />
+				</StackPanel>
+			</StackPanel>
+			<StackPanel>
+				<Label Content="Selected (*.pem):" Margin="10,0,0,0" VerticalAlignment="Top"/>
+				<StackPanel Orientation="Horizontal">
+					<TextBox x:Name="SelectPemTextBox" Width="460" VerticalContentAlignment="Center" Margin="10,0,10,0" VerticalAlignment="Top" Height="25" IsReadOnly="True"/>
+					<Button x:Name="SelectPemButton" Tag="SelectPemTextBox" Width="60" Content="Select" Margin="10,0,10,0" VerticalAlignment="Top" Style="{StaticResource SecondaryButtonStyle}" Click="SelectFolderButton_Click" />
+				</StackPanel>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal" Margin="0 80">
+				<TextBlock x:Name="InstallCertsTextBox" Text="No additional certificates are required: " />
+				<CheckBox x:Name="InstallCertsCheckBox" Margin="10, 0" Checked="InstallCertsCheckBox_Checked" Unchecked="InstallCertsCheckBox_Unchecked"/>
+				<mah:ProgressRing Width="14" Height="14" IsActive="True" x:Name="InstallCertsSpinner" Margin="10,0,10,0" Visibility="Collapsed" />
+			</StackPanel>
+		</StackPanel>
+    </Grid>
+</views:BaseStep>

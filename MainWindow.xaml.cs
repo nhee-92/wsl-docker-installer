@@ -14,6 +14,7 @@ namespace wsl_docker_installer
         private int currentStep = 1;
         private string distroName = "";
         private bool isWslInstalled = false;
+        private bool isCertificatesInstalled = false;
         private bool isDistroInstalled = false;
         private bool IsDockerInstalled = false;
         private bool IsDockerConfigured = false;
@@ -45,11 +46,16 @@ namespace wsl_docker_installer
                     break;
 
                 case 4:
-                    RenderDockerStep();
+                    RenderCertificatesStep();
 
                     break;
 
                 case 5:
+                    RenderDockerStep();
+
+                    break;
+
+                case 6:
                     RenderTaskStep();
 
                     break;
@@ -95,6 +101,24 @@ namespace wsl_docker_installer
             // TODO: Maybe unnecessary, but ensures the footer is updated correctly
             wslInstallationCheck.StepReadyChanged += ready => Footer.IsNextEnabled = ready;
             wslInstallationCheck.NextButtonTextChanged += text => Footer.SetNextButtonText(text);
+        }
+
+        private void RenderCertificatesStep()
+        {
+            Header.Title = "Certificate Installation (Optional)";
+            Header.Subtitle = "Import your own certificates if needed";
+
+            Footer.SetNextButtonText(footerPrimaryButtonNameInstall);
+            var certificatesInstall = new CertificatesInstall(distroName);
+            currentStepControl = certificatesInstall;
+
+            certificatesInstall.CertificatesInstalled += (installed) =>
+            {
+                isCertificatesInstalled = installed;
+                Footer.SetNextButtonText(installed ? footerPrimaryButtonNameNext : footerPrimaryButtonNameInstall);
+            };
+
+
         }
 
         private void RenderDistroStep()
@@ -163,6 +187,11 @@ namespace wsl_docker_installer
             if (currentStepControl is WslInstall wslCheck && !isWslInstalled)
             {
                 wslCheck.InstallWslAsync();
+                return;
+            }
+            else if (currentStepControl is CertificatesInstall certificatesInstall && !isCertificatesInstalled)
+            {
+                certificatesInstall.InstallCertificate();
                 return;
             }
             else if (currentStepControl is DistroInstall distroInstall && !isDistroInstalled)
