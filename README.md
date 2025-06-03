@@ -13,7 +13,7 @@ This project provides a simple and fully automated installer for setting up a Do
 
 * 📦 Automatic setup of WSL2 and Ubuntu
 * 🐳 Full Docker daemon configuration in WSL2
-* 🔁 TCP-based Docker access from Windows (`docker ps`)
+* 🔁 TCP-based Docker access from Windows
 * 🔧 Adds Docker CLI to Windows with `DOCKER_HOST` environment variable
 * 🔐 Adds required firewall and port proxy rules
 * 🪄 Scheduled task for Docker daemon auto-start
@@ -22,7 +22,7 @@ This project provides a simple and fully automated installer for setting up a Do
 
 ## 🚀 Quick Start
 
-1. **Run the Installer (as Administrator)**
+1. **Run the Installer**
    Launch the provided `.exe` installer. It will:
 
    * Install WSL2
@@ -55,7 +55,7 @@ This project provides a simple and fully automated installer for setting up a Do
    * Configures the daemon to listen on both:
 
      * Unix socket (`/var/run/docker.sock`)
-     * TCP (`tcp://0.0.0.0:2375`)
+     * TCP (`tcp://0.0.0.0:{port}`) (`2375` by default)
 
 3. **Scheduled Task**
 
@@ -75,7 +75,7 @@ This project provides a simple and fully automated installer for setting up a Do
    * Downloads the official Docker CLI from Docker's GitHub
    * Extracts and places it into `C:\sw\DockerCLI\docker`
    * Adds the folder to the Windows `PATH`
-   * Sets `DOCKER_HOST=tcp://localhost:2375` for native use
+   * Sets `DOCKER_HOST=tcp://localhost:{port}` (`2375` by default) for native use
 
 ---
 
@@ -91,7 +91,7 @@ You can modify:
 
 ## 🛠 Requirements
 
-* Windows 10 2004+ or Windows 11 (only tested on Win 11)
+* Windows 11
 * Admin privileges during installation
 * Internet connection (for package download)
 
@@ -106,13 +106,14 @@ You can modify:
   Ensure WSL is running and that the daemon was started (`dockerd` inside WSL).
 
 * **Need to uninstall?**
-  You can manually delete the scheduled task and firewall/portproxy rules:
+  You can manually delete the scheduled task, firewall/portproxy, the docker CLI and the WSL distribution rules:
 
   ```bash
-  rd /s /q "C:\sw\DockerCLI" <-- Deletes Docker CLI folder>
-  wsl --unregister {DistribuationName} <-- Unregisters WSL distribution>
-  schtasks /Delete /TN "DockerStart" /F <-- Deletes scheduled task>
-  netsh interface portproxy delete v4tov4 listenport=2375 listenaddress=0.0.0.0 <-- Deletes port proxy>
+  rd /s /q "C:\sw\DockerCLI"
+  wsl --unregister {DistribuationName}
+  schtasks /Delete /TN "DockerStart" /F
+  netsh interface portproxy delete v4tov4 listenport={port} listenaddress=0.0.0.0
+  netsh advfirewall firewall delete rule name="Docker TCP {port}"
   ```
 
 ---
