@@ -57,7 +57,7 @@ namespace wsl_docker_installer.Views.Steps
                 InstallText.Visibility = Visibility.Visible;
                 InstallProgressSpinner.Visibility = Visibility.Visible;
 
-                bool isDistroInstalled = await ProcessStarter.RunCommandAsync("wsl.exe", $"--import {distroName} \"{installDirectory}\" \"{tempRootFsPath}\"", $"Could not import {distroName}");
+                bool isDistroInstalled = await ProcessStarter.RunCommandAsync("wsl.exe", $"--import {distroName} \"{installDirectory}\" \"{tempRootFsPath}\"", $"Could not import {distroName}", Encoding.Unicode);
 
                 if (isDistroInstalled)
                 {
@@ -140,7 +140,7 @@ namespace wsl_docker_installer.Views.Steps
 
             try
             {
-                string output = await ProcessStarter.RunCommandAndGetOutputAsync("wsl.exe", "--list --quiet", Encoding.Unicode);
+                string output = await ProcessStarter.RunCommandWithOutputAsync("wsl.exe", "--list --quiet", Encoding.Unicode);
 
                 foreach (var line in output.Split('\n', StringSplitOptions.RemoveEmptyEntries))
                 {

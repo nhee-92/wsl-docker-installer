@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Text;
+using System.Windows;
 using System.Windows.Media;
 using wsl_docker_installer.Utils;
 
@@ -54,7 +55,9 @@ namespace wsl_docker_installer.Views.Steps
                 """;
             }
 
-            return await ProcessStarter.RunCommandInDistroAsync(distroName, dockerInstallScript, "Docker installation failed");
+            string arguments = $"-d {distroName} -- bash -c \"{dockerInstallScript.Replace("\"", "\\\"")}\"";
+
+            return await ProcessStarter.RunCommandAsync("wsl.exe", arguments, "Docker installation failed", Encoding.UTF8);
         }
     }
 }

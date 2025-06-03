@@ -107,7 +107,8 @@ namespace wsl_docker_installer.Views.Steps
                                    $"/TR \"cmd.exe /c \\\"{innerCommand}\\\"\" " +
                                    $"/SC ONLOGON /RU \"{user}\"";
 
-            string output = await ProcessStarter.RunCommandAndGetOutputAsync("wsl.exe", $"-d {distroName} hostname -I", Encoding.UTF8);
+            string output = await ProcessStarter.RunCommandWithOutputAsync("wsl.exe", $"-d {distroName} hostname -I", Encoding.UTF8);
+            MessageBox.Show(output);
             var match = RegexHelper.IpRegex().Match(output);
             string ip = match.Success ? match.Value : string.Empty;
 

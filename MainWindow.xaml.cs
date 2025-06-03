@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Text;
+using System.Windows;
 using wsl_docker_installer.Utils;
 using wsl_docker_installer.Views.Steps;
 
@@ -232,7 +233,7 @@ namespace wsl_docker_installer
 
             if (result == MessageBoxResult.Yes)
             {
-                await ProcessStarter.RunCommandAsync("shutdown.exe", "/r /t 0", ""); 
+                await ProcessStarter.RunCommandAsync("shutdown.exe", "/r /t 0", "", Encoding.Unicode); 
             }
             if (result == MessageBoxResult.No)
             {

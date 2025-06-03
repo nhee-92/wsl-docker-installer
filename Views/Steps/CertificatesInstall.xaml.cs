@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
@@ -39,24 +40,37 @@ namespace wsl_docker_installer.Views.Steps
 
             try
             {
-                await ProcessStarter.RunCommandInDistroAsync(distroName, "mkdir -p /usr/local/share/ca-certificates", "Failed to create dir");
+                string mkdir = "mkdir -p /usr/local/share/ca-certificates";
+                string mkdirArguments = $"-d {distroName} -- bash -c \"{mkdir.Replace("\"", "\\\"")}\"";
+
+                await ProcessStarter.RunCommandAsync("wsl.exe", mkdirArguments, "Failed to create dir", Encoding.UTF8);
 
                 foreach (var certFile in Directory.GetFiles(certsPemDir, "*.pem"))
                 {
                     string wslCertFile = ConvertToWslPath(certFile);
                     string baseName = Path.GetFileNameWithoutExtension(certFile);
                     string destination = $"/usr/local/share/ca-certificates/{baseName}.crt";
+                    string copyCommand = $"cp \"{wslCertFile}\" \"{destination}\"";
+                    string copyArguments = $"-d {distroName} -- bash -c \"{copyCommand.Replace("\"", "\\\"")}\"";
 
-                    await ProcessStarter.RunCommandInDistroAsync(distroName, $"cp \"{wslCertFile}\" \"{destination}\"", "Failed to copy certificates");
+                    await ProcessStarter.RunCommandAsync("wsl.exe", copyArguments, "Failed to copy certificates", Encoding.UTF8);
                 }
 
-                var commandWorked = await ProcessStarter.RunCommandInDistroAsync(distroName, "update-ca-certificates", "Failed to use update-ca-certificates");
+                string updateCerts = "update-ca-certificates";
+                string updateArguments = $"-d {distroName} -- bash -c \"{updateCerts.Replace("\"", "\\\"")}\"";
+
+                var commandWorked = await ProcessStarter.RunCommandAsync("wsl.exe", updateArguments, "Failed to use update-ca-certificates", Encoding.UTF8);
 
                 if (commandWorked) return true;
                 else
                 {
-                    await ProcessStarter.RunCommandInDistroAsync(distroName, "cp /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt.bak", "Failed to copy");
-                    await ProcessStarter.RunCommandInDistroAsync(distroName, "cat /usr/local/share/ca-certificates/*.crt >> /etc/ssl/certs/ca-certificates.crt", "Failed to copy");
+                    string copyCommand = "cp /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt.bak";
+                    string copyArguments = $"-d {distroName} -- bash -c \"{copyCommand.Replace("\"", "\\\"")}\"";
+                    string appendCommand = "cat /usr/local/share/ca-certificates/*.crt >> /etc/ssl/certs/ca-certificates.crt";
+                    string appendArguments = $"-d {distroName} -- bash -c \"{appendCommand.Replace("\"", "\\\"")}\"";
+
+                    await ProcessStarter.RunCommandAsync("wsl.exe", copyArguments, "Failed to copy", Encoding.UTF8);
+                    await ProcessStarter.RunCommandAsync("wsl.exe", appendArguments, "Failed to copy", Encoding.UTF8);
 
                     return true;
                 }
@@ -69,7 +83,7 @@ namespace wsl_docker_installer.Views.Steps
 
         private static string ConvertToWslPath(string windowsPath)
         {
-            return "/mnt/" + windowsPath[0].ToString().ToLower() + windowsPath.Substring(2).Replace("\\", "/");
+            return "/mnt/" + windowsPath[0].ToString().ToLower() + windowsPath[2..].Replace("\\", "/");
         }
 
         private void InstallCertsCheckBox_Checked(object sender, RoutedEventArgs e)
