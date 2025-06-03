@@ -1,12 +1,10 @@
-﻿using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Navigation;
 using wsl_docker_installer.Utils;
 
 namespace wsl_docker_installer.Views.Steps
@@ -37,7 +35,7 @@ namespace wsl_docker_installer.Views.Steps
             ConfigureDockerInstallerSpinner.Visibility = Visibility.Visible;
 
             ConfigureDockerInstallerText.Text = "Configure...";
-            bool configured = await Configure2(port);
+            bool configured = await Configure(port);
 
             ConfigureDockerInstallerText.Text = "Install Docker CLI...";
             bool dockerCLIInstalled = await InstallDockerCLI();
@@ -103,32 +101,6 @@ namespace wsl_docker_installer.Views.Steps
         private async Task<bool> Configure(string port)
         {
             string user = $"{Environment.UserDomainName}\\{Environment.UserName}";
-            string innerCommand = $"wsl.exe -d {distroName} -- bash -c \\\"sudo dockerd -H unix:///var/run/docker.sock -H tcp://0.0.0.0:{port}\\\"";
-            string scheduledTask = $"schtasks /Create /F /TN DockerStart " +
-                                 $"/TR \"cmd.exe /c \\\"{innerCommand}\\\"\" " +
-                                 $"/SC ONLOGON /RU \"{user}\"";
-            await ProcessStarter.RunCommandAsAdminAsync("cmd.exe", $"/c {scheduledTask}");
-
-            string output = await ProcessStarter.RunCommandAndGetOutputAsync("wsl.exe", $"-d {distroName} hostname -I", Encoding.UTF8);
-            var match = Regex.Match(output, @"\b(?:\d{1,3}\.){3}\d{1,3}\b");
-            string ip = match.Success ? match.Value : string.Empty;
-
-            if (string.IsNullOrEmpty(ip)) return false;
-
-            string allCommands = string.Join(" & ", new[]
-            {
-                $"netsh advfirewall firewall delete rule name=\"Docker TCP {port}\"",
-                $"netsh interface portproxy delete v4tov4 listenport={port} listenaddress=0.0.0.0",
-                $"netsh advfirewall firewall add rule name=\"Docker TCP {port}\" dir=in action=allow protocol=TCP localport={port}",
-                $"netsh interface portproxy add v4tov4 listenport={port} listenaddress=0.0.0.0 connectport={port} connectaddress={ip}"
-            });
-
-            return await ProcessStarter.RunCommandAsAdminAsync("cmd.exe", $"/c {allCommands}");
-        }
-
-        private async Task<bool> Configure2(string port)
-        {
-            string user = $"{Environment.UserDomainName}\\{Environment.UserName}";
 
             string innerCommand = $"wsl.exe -d {distroName} -- bash -c \\\"sudo dockerd -H unix:///var/run/docker.sock -H tcp://0.0.0.0:{port}\\\"";
             string scheduledTask = $"schtasks /Create /F /TN DockerStart " +
@@ -141,18 +113,16 @@ namespace wsl_docker_installer.Views.Steps
 
             if (string.IsNullOrEmpty(ip)) return false;
 
-            var commands = new[]
+            var commands = string.Join(" & ", new[]
             {
                 $"netsh advfirewall firewall delete rule name=\"Docker TCP {port}\" >nul 2>&1",
                 $"netsh interface portproxy delete v4tov4 listenport={port} listenaddress=0.0.0.0 >nul 2>&1",
                 $"netsh advfirewall firewall add rule name=\"Docker TCP {port}\" dir=in action=allow protocol=TCP localport={port}",
                 $"netsh interface portproxy add v4tov4 listenport={port} listenaddress=0.0.0.0 connectport={port} connectaddress={ip}",
                 scheduledTask
-            };
+            });
 
-            string allCommands = string.Join(" & ", commands);
-
-            return await ProcessStarter.RunCommandAsAdminAsync("cmd.exe", $"/c \"{allCommands}\"");
+            return await ProcessStarter.RunCommandAsAdminAsync("cmd.exe", $"/c \"{commands}\"");
         }
     }
 }

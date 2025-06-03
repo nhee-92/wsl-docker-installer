@@ -1,30 +1,59 @@
 # Build
 bin/
 obj/
+*.exe
+*.dll
+*.pdb
 
 # VS Code / Rider / VS
 .vs/
-.vscode/
-.idea/
-*.user
 *.suo
-
-# Logs
-*.log
-
-# User-specific
-*.userprefs
+*.user
 *.userosscache
 *.sln.docstates
+
+# JetBrains Rider
+.idea/
+
+# VS Code
+.vscode/
 
 # Publish output
 *.publish/
 
-# NuGet
+# NuGet packages
 *.nupkg
 *.snupkg
+*.nuspec
+packages/
+*.symbols.nupkg
 .nuget/
 
-# Others
-*.db
-*.DS_Store
+# Backup & Cache
+*.bak
+*.tmp
+*.log
+
+# Windows / macOS
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# WPF generated files (if any appear)
+*.g.cs
+*.g.i.cs
+*.baml
+
+# Rider / ReSharper / Roslyn / VS Code Analyzers
+_ReSharper*/
+*.DotSettings.user
+*.dotCover
+.idea/
+.vscode/
+
+# Application Insights
+ApplicationInsights.config
+
+# Other temporary folders
+TestResults/
