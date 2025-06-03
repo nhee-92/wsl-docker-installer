@@ -108,7 +108,7 @@ namespace wsl_docker_installer.Views.Steps
                                    $"/SC ONLOGON /RU \"{user}\"";
 
             string output = await ProcessStarter.RunCommandAndGetOutputAsync("wsl.exe", $"-d {distroName} hostname -I", Encoding.UTF8);
-            var match = Regex.Match(output, @"\b(?:\d{1,3}\.){3}\d{1,3}\b");
+            var match = RegexHelper.IpRegex().Match(output);
             string ip = match.Success ? match.Value : string.Empty;
 
             if (string.IsNullOrEmpty(ip)) return false;
@@ -124,5 +124,11 @@ namespace wsl_docker_installer.Views.Steps
 
             return await ProcessStarter.RunCommandAsAdminAsync("cmd.exe", $"/c \"{commands}\"");
         }
+    }
+
+    public static partial class RegexHelper
+    {
+        [GeneratedRegex(@"\b(?:\d{1,3}\.){3}\d{1,3}\b")]
+        public static partial Regex IpRegex();
     }
 }

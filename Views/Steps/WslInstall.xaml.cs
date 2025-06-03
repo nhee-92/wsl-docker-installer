@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Media;
 
 namespace wsl_docker_installer.Views.Steps
@@ -77,8 +71,6 @@ namespace wsl_docker_installer.Views.Steps
 
         private async Task CheckWslInstalledAsync()
         {
-            // Testing purpose
-            await Task.Delay(1500);
             bool wslInstalled = await CheckWsl();
 
             SetStepReady(true);
