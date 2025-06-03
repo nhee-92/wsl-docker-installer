@@ -115,6 +115,9 @@ You can modify:
   netsh interface portproxy delete v4tov4 listenport={port} listenaddress=0.0.0.0
   netsh advfirewall firewall delete rule name="Docker TCP {port}"
   ```
+Or you can use the provided uninstall.bash script to automate this process.
+
+`.\uninstall.cmd {port} {distributionName}`
 
 ---
 
