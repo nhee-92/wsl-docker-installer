@@ -59,31 +59,48 @@ namespace wsl_docker_installer.Views.Steps
 
         private static async Task<bool> InstallDockerCLI()
         {
-            string DownloadUrl = "https://download.docker.com/win/static/stable/x86_64/docker-26.1.4.zip";
-            string InstallPath = @"C:\sw\DockerCLI";
+            string dockerCLIUrl = "https://download.docker.com/win/static/stable/x86_64/docker-26.1.4.zip";
+            string dockerComposeCLIUrl = "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Windows-x86_64.exe";
+            string installPath = @"C:\sw\DockerCLI";
+            string dockerComposeTargetDirectory = @"C:\sw\DockerCLI\docker";
+            string tempFile = Path.Combine(Path.GetTempPath(), "docker-compose.exe");
+            string targetFile = Path.Combine(dockerComposeTargetDirectory, "docker-compose.exe");
 
             try
             {
-                Directory.CreateDirectory(InstallPath);
+                Directory.CreateDirectory(installPath);
                 string tempZipPath = Path.Combine(Path.GetTempPath(), "dockercli.zip");
 
                 using (HttpClient client = new())
                 {
-                    using var response = await client.GetAsync(DownloadUrl);
+                    using var response = await client.GetAsync(dockerCLIUrl);
                     response.EnsureSuccessStatusCode();
                     await using var fs = new FileStream(tempZipPath, FileMode.Create);
                     await response.Content.CopyToAsync(fs);
                 }
 
-                ZipFile.ExtractToDirectory(tempZipPath, InstallPath, overwriteFiles: true);
+                ZipFile.ExtractToDirectory(tempZipPath, installPath, overwriteFiles: true);
                 File.Delete(tempZipPath);
 
-                AddToPathIfMissing($"{InstallPath}\\docker");
+                using (HttpClient client = new())
+                {
+                    using var response = await client.GetAsync(dockerComposeCLIUrl);
+                    response.EnsureSuccessStatusCode();
+                    using var fs = new FileStream(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
+                    await response.Content.CopyToAsync(fs);
+                }
+
+                Directory.CreateDirectory(dockerComposeTargetDirectory);
+                File.Copy(tempFile, targetFile, overwrite: true);
+                File.Delete(tempFile);
+
+                AddToPathIfMissing($"{installPath}\\docker");
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                MessageBox.Show(ex.Message);
                 return false;
             }
         }
