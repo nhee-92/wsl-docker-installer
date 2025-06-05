@@ -33,7 +33,7 @@ schtasks /Delete /TN "DockerStart" /F
 
 REM === Remove port forwarding ===
 echo [INFO] Removing port forwarding for port %PORT%...
-netsh interface portproxy delete v4tov4 listenport=%PORT% listenaddress=0.0.0.0
+netsh interface portproxy delete v4tov4 listenport=%PORT%
 
 REM === Delete firewall rule ===
 echo [INFO] Deleting firewall rule "Docker TCP %PORT%"...

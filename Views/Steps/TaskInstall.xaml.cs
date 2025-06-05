@@ -117,26 +117,24 @@ namespace wsl_docker_installer.Views.Steps
 
         private async Task<bool> Configure(string port)
         {
-            string user = $"{Environment.UserDomainName}\\{Environment.UserName}";
-
-            string innerCommand = $"wsl.exe -d {distroName} -- bash -c \\\"sudo dockerd -H unix:///var/run/docker.sock -H tcp://0.0.0.0:{port}\\\"";
-            string scheduledTask = $"schtasks /Create /F /TN DockerStart " +
-                                   $"/TR \"cmd.exe /c \\\"{innerCommand}\\\"\" " +
-                                   $"/SC ONLOGON /RU \"{user}\"";
-
             string output = await ProcessStarter.RunCommandWithOutputAsync("wsl.exe", $"-d {distroName} hostname -I", Encoding.UTF8);
-            MessageBox.Show(output);
             var match = RegexHelper.IpRegex().Match(output);
             string ip = match.Success ? match.Value : string.Empty;
 
             if (string.IsNullOrEmpty(ip)) return false;
 
+            string user = $"{Environment.UserDomainName}\\{Environment.UserName}";
+            string innerCommand = $"wsl.exe -d {distroName} -- bash -c \\\"sudo dockerd -H unix:///var/run/docker.sock -H tcp://{ip}\\\"";
+            string scheduledTask = $"schtasks /Create /F /TN DockerStart " +
+                                   $"/TR \"cmd.exe /c \\\"{innerCommand}\\\"\" " +
+                                   $"/SC ONLOGON /RU \"{user}\"";
+
             var commands = string.Join(" & ", new[]
             {
                 $"netsh advfirewall firewall delete rule name=\"Docker TCP {port}\" >nul 2>&1",
-                $"netsh interface portproxy delete v4tov4 listenport={port} listenaddress=0.0.0.0 >nul 2>&1",
+                $"netsh interface portproxy delete v4tov4 listenport={port} >nul 2>&1",
                 $"netsh advfirewall firewall add rule name=\"Docker TCP {port}\" dir=in action=allow protocol=TCP localport={port}",
-                $"netsh interface portproxy add v4tov4 listenport={port} listenaddress=0.0.0.0 connectport={port} connectaddress={ip}",
+                $"netsh interface portproxy add v4tov4 listenport={port} connectport={port} connectaddress={ip}",
                 scheduledTask
             });
 
