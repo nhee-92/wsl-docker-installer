@@ -98,10 +98,6 @@ namespace wsl_docker_installer
                 isWslInstalled = installed;
                 Footer.SetNextButtonText(installed ? footerPrimaryButtonNameNext : footerPrimaryButtonNameInstall);
             };
-
-            // TODO: Maybe unnecessary, but ensures the footer is updated correctly
-            wslInstallationCheck.StepReadyChanged += ready => Footer.IsNextEnabled = ready;
-            wslInstallationCheck.NextButtonTextChanged += text => Footer.SetNextButtonText(text);
         }
 
         private void RenderCertificatesStep()
@@ -223,7 +219,7 @@ namespace wsl_docker_installer
             }
         }
 
-        public static async void AskAndRestart()
+        private static async void AskAndRestart()
         {
             var result = MessageBox.Show(
                 "The system needs to restart to complete the installation. Do you want to restart now?",

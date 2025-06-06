@@ -130,7 +130,6 @@ namespace wsl_docker_installer.Utils
         /// <param name="psi">The <see cref="ProcessStartInfo"/> configuration for the process.</param>
         /// <param name="errorMessage">The message to display if the process exits with an error code.</param>
         /// <returns><c>true</c> if the process exits successfully; otherwise, <c>false</c>.</returns>
-
         private static async Task<bool> ProcessStarterHandling(ProcessStartInfo psi, string errorMessage) 
         {
             using var process = new Process { StartInfo = psi };

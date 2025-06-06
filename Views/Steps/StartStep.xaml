@@ -4,31 +4,15 @@
              xmlns:views="clr-namespace:wsl_docker_installer.Views.Steps">
     <StackPanel Orientation="Vertical" >
         <TextBlock 
-            Text="If you use this setup to install WSL and Docker, you accept the terms and conditions of Microsoft and Docker." 
+            Text="This wizard makes Docker natively available on Windows systems so that no additional software is required to use Docker."
+            TextWrapping="Wrap"
             FontSize="11" 
             Margin="10 5 0 0"
         />
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="80">
-            <TextBlock 
-                Margin="5 5 0 0">
-                <Run Text="Docker: " />
-                <Hyperlink NavigateUri="https://www.docker.com/legal/docker-terms-service/"
-                           RequestNavigate="Hyperlink_RequestNavigate"
-                           Foreground="Gray"
-                           TextDecorations="{x:Null}">
-                    Terms of Service
-                </Hyperlink>
-            </TextBlock>
-
-            <TextBlock Margin="5 5 0 0">
-                <Run Text="Microsoft: " />
-                <Hyperlink NavigateUri="https://www.microsoft.com/en-id/servicesagreement"
-                           RequestNavigate="Hyperlink_RequestNavigate"
-                           Foreground="Gray"
-                           TextDecorations="{x:Null}">
-                    Terms of Service
-                </Hyperlink>
-            </TextBlock>
-        </StackPanel>
+        <TextBlock
+            Text="WSL2 is installed, if not available, a light-weight Ubuntu distribution and Docker in the VM. In addition, the VM is made accessible from Windows via a TCP port."
+            TextWrapping="Wrap"
+            FontSize="11"
+            Margin="10 5 0 0"/>
     </StackPanel>
 </views:BaseStep>

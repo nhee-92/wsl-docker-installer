@@ -1,20 +1,19 @@
-﻿using System.Diagnostics;
-using System.Text;
+﻿using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using wsl_docker_installer.Utils;
 
 namespace wsl_docker_installer.Views.Steps
 {
     public partial class WslInstall : BaseStep
     {
-        public bool IsWslInstalled { get; private set; } = false;
         public event Action<bool> WslCheckCompleted = delegate { };
 
         public WslInstall()
         {
             SetStepReady(false);
             InitializeComponent();
-            Loaded += InstallationCheck_Loaded;
+            CheckWslInstalledAsync();
         }
 
         public async void InstallWslAsync()
@@ -22,98 +21,41 @@ namespace wsl_docker_installer.Views.Steps
             SetStepReady(false);
             SetNextButtonText("Installing...");
 
-            StatusValue.Text = "Install WSL...";
+            StatusValue.Text = "Install WSL2...";
             StatusValue.Foreground = new SolidColorBrush(Colors.Black);
             ProgressSpinner.Visibility = Visibility.Visible;
 
-            try
+            bool isWslInstalled = await ProcessStarter.RunCommandAsAdminAsync("wsl.exe", "--install");
+
+            if (isWslInstalled)
             {
-                var psi = new ProcessStartInfo("wsl.exe", "--install")
-                {
-                    UseShellExecute = true,
-                    Verb = "runas"
-                };
-
-                using var process = new Process { StartInfo = psi };
-                await process.WaitForExitAsync();
-
-                if (process.ExitCode == 0)
-                {
-                    IsWslInstalled = true;
-                    StatusValue.Text = "WSL successfully installed.";
-                    StatusValue.Foreground = new SolidColorBrush(Colors.Green);
-                    SetNextButtonText("Next");
-                }
-                else
-                {
-                    StatusValue.Text = "Installation failed.";
-                    StatusValue.Foreground = new SolidColorBrush(Colors.Red);
-                    SetNextButtonText("Try again");
-                }
+                StatusValue.Text = "WSL2 successfully installed.";
+                StatusValue.Foreground = new SolidColorBrush(Colors.Green);
+                SetNextButtonText("Next");
             }
-            catch (Exception ex)
+            else
             {
-                StatusValue.Text = $"Error: {ex.Message}";
+                StatusValue.Text = "Installation failed.";
                 StatusValue.Foreground = new SolidColorBrush(Colors.Red);
                 SetNextButtonText("Try again");
             }
-            finally
-            {
-                ProgressSpinner.Visibility = Visibility.Collapsed;
-                SetStepReady(true);
-            }
+
+            ProgressSpinner.Visibility = Visibility.Collapsed;
+            SetStepReady(true);
         }
 
-        private async void InstallationCheck_Loaded(object sender, RoutedEventArgs e)
+        private async void CheckWslInstalledAsync()
         {
-            await CheckWslInstalledAsync();
-        }
-
-        private async Task CheckWslInstalledAsync()
-        {
-            bool wslInstalled = await CheckWsl();
+            string output = await ProcessStarter.RunCommandWithOutputAsync("wsl.exe", "--status", Encoding.Unicode);
+            bool wslInstalled = output.Contains("Standardversion: 2", StringComparison.OrdinalIgnoreCase) ||
+                                output.Contains("Default Version: 2", StringComparison.OrdinalIgnoreCase);
 
             SetStepReady(true);
 
             ProgressSpinner.Visibility = Visibility.Collapsed;
-            StatusValue.Text = wslInstalled ? "WSL found." : "WSL must be installed.";
+            StatusValue.Text = wslInstalled ? "WSL2 found." : "WSL2 must be installed.";
             StatusValue.Foreground = new SolidColorBrush(wslInstalled ? Colors.Green : Colors.Red);
             WslCheckCompleted.Invoke(wslInstalled);
-        }
-
-        private static async Task<bool> CheckWsl()
-        {
-            try
-            {
-                var psi = new ProcessStartInfo
-                {
-                    FileName = "wsl.exe",
-                    Arguments = "--status",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = Encoding.Unicode,
-                    StandardErrorEncoding = Encoding.Unicode
-                };
-
-                using var process = new Process { StartInfo = psi };
-                process.Start();
-
-                string output = await process.StandardOutput.ReadToEndAsync();
-                string error = await process.StandardError.ReadToEndAsync();
-                await process.WaitForExitAsync();
-
-                if (process.ExitCode != 0)
-                    return false;
-
-                return output.Contains("Standardversion: 2", StringComparison.OrdinalIgnoreCase) ||
-                    output.Contains("Default Version: 2", StringComparison.OrdinalIgnoreCase);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
         }
     }
 }
