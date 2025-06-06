@@ -35,7 +35,8 @@ namespace wsl_docker_installer.Views.Steps
             ConfigureDockerInstallerSpinner.Visibility = Visibility.Visible;
 
             ConfigureDockerInstallerText.Text = "Configure...";
-            bool configured = await Configure(port);
+            WSLLocalhostFowarding();
+            bool configured = await CreateSchtask(port);
 
             ConfigureDockerInstallerText.Text = "Install Docker CLI...";
             bool dockerCLIInstalled = await InstallDockerCLI();
@@ -115,30 +116,39 @@ namespace wsl_docker_installer.Views.Steps
             }
         }
 
-        private async Task<bool> Configure(string port)
+        private static void WSLLocalhostFowarding() 
         {
-            string output = await ProcessStarter.RunCommandWithOutputAsync("wsl.exe", $"-d {distroName} hostname -I", Encoding.UTF8);
-            var match = RegexHelper.IpRegex().Match(output);
-            string ip = match.Success ? match.Value : string.Empty;
+            string wslConfigPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".wslconfig");
 
-            if (string.IsNullOrEmpty(ip)) return false;
+            if (!File.Exists(wslConfigPath))
+            {
+                File.WriteAllText(wslConfigPath, "[wsl2]\nlocalhostForwarding=true\n");
+            }
+            else
+            {
+                var lines = File.ReadAllLines(wslConfigPath).ToList();
+                bool sectionExists = lines.Any(line => line.Trim().Equals("[wsl2]", StringComparison.OrdinalIgnoreCase));
+                bool forwardingSet = lines.Any(line => line.Trim().StartsWith("localhostForwarding", StringComparison.OrdinalIgnoreCase));
 
+                if (!sectionExists)
+                    lines.Add("[wsl2]");
+
+                if (!forwardingSet)
+                    lines.Add("localhostForwarding=true");
+
+                File.WriteAllLines(wslConfigPath, lines);
+            }
+        }
+
+        private async Task<bool> CreateSchtask(string port)
+        {
             string user = $"{Environment.UserDomainName}\\{Environment.UserName}";
-            string innerCommand = $"wsl.exe -d {distroName} -- bash -c \\\"sudo dockerd -H unix:///var/run/docker.sock -H tcp://{ip}\\\"";
+            string innerCommand = $"wsl.exe -d {distroName} -- bash -c \\\"sudo dockerd -H unix:///var/run/docker.sock -H tcp://127.0.0.1:{port}\\\"";
             string scheduledTask = $"schtasks /Create /F /TN DockerStart " +
                                    $"/TR \"cmd.exe /c \\\"{innerCommand}\\\"\" " +
                                    $"/SC ONLOGON /RU \"{user}\"";
 
-            var commands = string.Join(" & ", new[]
-            {
-                $"netsh advfirewall firewall delete rule name=\"Docker TCP {port}\" >nul 2>&1",
-                $"netsh interface portproxy delete v4tov4 listenport={port} >nul 2>&1",
-                $"netsh advfirewall firewall add rule name=\"Docker TCP {port}\" dir=in action=allow protocol=TCP localport={port}",
-                $"netsh interface portproxy add v4tov4 listenport={port} connectport={port} connectaddress={ip}",
-                scheduledTask
-            });
-
-            return await ProcessStarter.RunCommandAsAdminAsync("cmd.exe", $"/c \"{commands}\"");
+            return await ProcessStarter.RunCommandAsAdminAsync("cmd.exe", $"/c \"{scheduledTask}\"");
         }
     }
 
