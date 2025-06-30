@@ -219,6 +219,15 @@ namespace wsl_docker_installer
             }
         }
 
+        private void FooterCancelClicked(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Do you really want to end the setup?", "Confirm cancel", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            if (result == MessageBoxResult.OK)
+            {
+                Application.Current.Shutdown();
+            }
+        }
+
         private static async void AskAndRestart()
         {
             var result = MessageBox.Show(
@@ -229,18 +238,9 @@ namespace wsl_docker_installer
 
             if (result == MessageBoxResult.Yes)
             {
-                await ProcessStarter.RunCommandAsync("shutdown.exe", "/r /t 0", "", Encoding.Unicode); 
+                await ProcessStarter.RunCommandAsync("shutdown.exe", "/r /t 0", "", Encoding.Unicode);
             }
             if (result == MessageBoxResult.No)
-            {
-                Application.Current.Shutdown();
-            }
-        }
-
-        private void FooterCancelClicked(object sender, RoutedEventArgs e)
-        {
-            var result = MessageBox.Show("Do you really want to end the setup?", "Confirm cancel", MessageBoxButton.OKCancel, MessageBoxImage.Question);
-            if (result == MessageBoxResult.OK)
             {
                 Application.Current.Shutdown();
             }

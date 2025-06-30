@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;

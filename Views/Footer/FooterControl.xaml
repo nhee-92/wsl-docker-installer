@@ -51,7 +51,7 @@
                 Orientation="Horizontal" 
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
-                Grid.Column="1">
+                Grid.Column="1" Cursor="">
             <Button x:Name="NextBtn"
                 Content="Next"
                 Style="{StaticResource PrimaryButtonStyle}"

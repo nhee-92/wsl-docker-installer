@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("wsl-docker-installer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d9c261325028ef7479f5119b74361b6f53b20f44")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1639f70c0388f75f5df52979d6fe9f54bf7c9f14")]
 [assembly: System.Reflection.AssemblyProductAttribute("wsl-docker-installer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("wsl-docker-installer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

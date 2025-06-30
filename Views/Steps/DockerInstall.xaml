@@ -34,11 +34,7 @@
             </Border>
 
             <StackPanel Orientation="Vertical" Margin="0,110">
-                <StackPanel x:Name="OldDockerCheckPanel" Margin="0,0,0,10" Orientation="Horizontal" >
-                    <TextBlock Text="Old docker-compose to be installed as well?" />
-                    <CheckBox x:Name="OldDockerCheckBox" Margin="10, 0" />
-                </StackPanel>
-                <StackPanel x:Name="InstallDockerProgressPanel" Margin="0,0,0,10" Orientation="Horizontal" >
+                <StackPanel x:Name="InstallDockerProgressPanel" Margin="0,0,0,10" Orientation="Horizontal" Visibility="Collapsed">
                     <TextBlock 
                         x:Name="DockerInstallText" 
                         FontSize="11" 

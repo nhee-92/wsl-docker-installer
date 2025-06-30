@@ -14,5 +14,10 @@
             TextWrapping="Wrap"
             FontSize="11"
             Margin="10 5 0 0"/>
+        <TextBlock
+            Text="IMPORTANT: Make sure the enviorment variable DOCKER_HOST isn't set!"
+            TextWrapping="Wrap"
+            FontSize="11"
+            Margin="10 5 0 0"/>
     </StackPanel>
 </views:BaseStep>

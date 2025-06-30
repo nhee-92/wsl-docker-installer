@@ -46,7 +46,7 @@ namespace wsl_docker_installer.Views.Steps
 
         private async void CheckWslInstalledAsync()
         {
-            string output = await ProcessStarter.RunCommandWithOutputAsync("wsl.exe", "--status", Encoding.Unicode);
+            string output = await ProcessStarter.RunCommandForOutputAsync("wsl.exe", "--status", Encoding.Unicode);
             bool wslInstalled = output.Contains("Standardversion: 2", StringComparison.OrdinalIgnoreCase) ||
                                 output.Contains("Default Version: 2", StringComparison.OrdinalIgnoreCase);
 

@@ -16,5 +16,5 @@ C:\git\wsl-docker-installer\App.xaml
 214-1409695330
 MainWindow.xaml;Views\Footer\FooterControl.xaml;Views\Header\HeaderControl.xaml;Views\Steps\CertificatesInstall.xaml;Views\Steps\DistroInstall.xaml;Views\Steps\DockerInstall.xaml;Views\Steps\StartStep.xaml;Views\Steps\TaskInstall.xaml;Views\Steps\WslInstall.xaml;
 
-True
+False
 

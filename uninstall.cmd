@@ -1,4 +1,5 @@
 @echo off
+setlocal enabledelayedexpansion
 REM === Docker Cleanup Script ===
 
 REM === Check for required arguments ===
@@ -27,17 +28,26 @@ REM === Remove Docker CLI folder ===
 echo [INFO] Deleting folder C:\sw\DockerCLI...
 rd /s /q "C:\sw\DockerCLI"
 
-REM === Delete scheduled task ===
-echo [INFO] Deleting scheduled task "DockerStart"...
-schtasks /Delete /TN "DockerStart" /F
+REM === Remove .wslconfig from user ===
+echo [INFO] Removing port forwarding in .wslconfig...
 
-REM === Remove port forwarding ===
-echo [INFO] Removing port forwarding for port %PORT%...
-netsh interface portproxy delete v4tov4 listenport=%PORT%
 
-REM === Delete firewall rule ===
-echo [INFO] Deleting firewall rule "Docker TCP %PORT%"...
-netsh advfirewall firewall delete rule name="Docker TCP %PORT%" >nul 2>&1
+set "infile=%USERPROFILE%\.wslconfig"
+set "tempfile=%infile%.tmp"
+
+if exist "%infile%" (
+    >"%tempfile%" (
+        for /f "usebackq delims=" %%A in ("%infile%") do (
+            set "line=%%A"
+            setlocal enabledelayedexpansion
+            if /i not "!line!"=="localhostForwarding=true" echo !line!
+            endlocal
+        )
+    )
+    move /Y "%tempfile%" "%infile%" >nul
+) else (
+    echo [INFO] No .wslconfig file found. Skipping.
+)
 
 echo.
 echo [DONE] Cleanup completed for port %PORT% and distribution "%DISTRO%".

@@ -10,10 +10,11 @@ namespace wsl_docker_installer.Views.Steps
 {
     public partial class DistroInstall : BaseStep
     {
+        private List<string> distros = [];
+        private string distroName = string.Empty;
+
         public event Action<bool> DistroInstallCheck = delegate { };
         public event Action<string> DistroNameConfirmed = delegate { };
-        private string distroName = string.Empty;
-        List<string> distros = [];
 
         public DistroInstall()
         {
@@ -140,7 +141,7 @@ namespace wsl_docker_installer.Views.Steps
 
             try
             {
-                string output = await ProcessStarter.RunCommandWithOutputAsync("wsl.exe", "--list --quiet", Encoding.Unicode);
+                string output = await ProcessStarter.RunCommandForOutputAsync("wsl.exe", "--list --quiet", Encoding.Unicode);
 
                 foreach (var line in output.Split('\n', StringSplitOptions.RemoveEmptyEntries))
                 {

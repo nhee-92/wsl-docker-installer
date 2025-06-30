@@ -41,7 +41,7 @@ namespace wsl_docker_installer.Utils
         /// <param name="arguments">The command-line arguments.</param>
         /// <param name="encoding">The encoding used for standard output.</param>
         /// <returns>The standard output of the process as a <see cref="string"/>.</returns>
-        public static async Task<string> RunCommandWithOutputAsync(string file, string arguments, Encoding encoding)
+        public static async Task<string> RunCommandForOutputAsync(string file, string arguments, Encoding encoding)
         {
             ProcessStartInfo psi = CreateProcessStart(file, arguments, true, true, false, true, false, encoding);
 
