@@ -57,3 +57,6 @@ ApplicationInsights.config
 
 # Other temporary folders
 TestResults/
+
+# Publish profiles (optional)
+Properties/PublishProfiles/
